@@ -79,8 +79,6 @@ const getGitHubUserProfile = async (username) => {
         console.log(error)
     }
 }
-
-
 //--6--//
 const printGithubUserProfile = async (username) => {
     try {
@@ -91,7 +89,6 @@ const printGithubUserProfile = async (username) => {
                 img: `${lista.avatar_url}`,
                 name: `${lista.name}`
             }
-            console.log(listaNueva)
             return listaNueva
         } else {
             throw `No se encontro la URL`
@@ -111,31 +108,48 @@ printGithubUserProfile('Stephani')
 const getAndPrintGitHubUserProfile = async (username) => {
     try {
         const data = await fetch(`https://api.github.com/users/${username}`)
-
         if (data.ok) {
             const lista = await data.json();
-            const seccion = document.createElement('SECTION');
-            const imagen = document.createElement('IMG');
-            imagen.setAttribute('src', lista.avatar_url)
-            imagen.setAttribute('alt', lista.name)
-            const encabezado = document.createElement('H1')
-            encabezado.textContent = `${lista.name}`
-            const parrafo = document.createElement('P');
-            parrafo.textContent = `Public repos: ${lista.public_repos}`
-            seccion.append(imagen, encabezado, parrafo)
-            return seccion;
-
+            return `<section><img src="${lista.avatar_url}" alt="${lista.name}"><h1>${lista.name}</h1><p>Public repos: ${lista.public_repos}</p></section>`;
         } else {
             throw `no se encontro la URL`
         }
+
     } catch (error) {
         console.log(error)
     }
 }
-getAndPrintGitHubUserProfile('Alberto')
+getAndPrintGitHubUserProfile('Alenriquez96')
     .then((resp) => {
-        if (resp) {
-            console.log(resp);
-            document.body.appendChild(resp); 
-        }})
-    .catch((error) => { console.log(error) })
+        console.log(resp)
+    }).catch((error) => {
+        console.log(error)
+    })
+
+//--9--//
+const userNames = ['octocat', 'alenriquez96', 'alejandroreyesb'];
+const realNames = ['The octocat', 'Alberto Enriquez', 'Alejandro Reyes']
+
+const fetchGithubUsers = async(userNames) =>{
+
+    let arrayUsuarios = userNames.map(async(username)=>{
+        try{
+            const response = await fetch('https://api.github.com/users/${username}')
+
+            if(response.ok){
+                const data = await response.json();
+                return data;
+            }else {
+                throw `No se accedio a la URL`
+            }
+        }catch{
+            console.log(error);
+        }
+    })
+    let result = await Promise.all(arrayUsuarios);
+    console.log(result);
+    result.forEach((user)=>{
+        console.log(user.name, user.html_url)
+    })
+    return result;
+}
